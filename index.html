@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+    <script src="script.js" defer></script>
+    <style>
+        /* Smooth transitions for hiding/showing sections */
+        .section {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        .hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+
+        .visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        /* Button hover animations */
+        button {
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Card hover animations */
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 text-gray-800 font-sans">
+    <!-- Main Container -->
+    <div class="flex h-screen">
+
+        <!-- Sidebar -->
+        <div class="w-1/6 bg-blue-900 text-white p-6 flex flex-col">
+            <div class="text-2xl font-bold mb-10">Weather App</div>
+            <button id="dashboard-btn" class="py-3 px-4 mb-4 text-left bg-blue-700 rounded-lg hover:bg-blue-800">
+                Dashboard
+            </button>
+            <button id="tables-btn" class="py-3 px-4 mb-4 text-left bg-blue-700 rounded-lg hover:bg-blue-800">
+                Tables
+            </button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+
+            <!-- Top Bar -->
+            <div class="flex justify-between items-center mb-6">
+                <!-- Search Bar -->
+                <div class="flex w-2/3">
+                    <input type="text" id="search-bar" placeholder="Search City"
+                        class="flex-grow p-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring focus:ring-blue-200">
+                    <button id="search-button" class="p-3 bg-blue-600 text-white rounded-r-md hover:bg-blue-700">
+                        Get Weather
+                    </button>
+                </div>
+                <!-- User Profile -->
+                <div class="w-12 h-12 bg-gray-300 rounded-full"></div>
+            </div>
+
+            <!-- Temperature Unit Toggle -->
+            <div class="mb-4">
+                <label for="unit-toggle" class="mr-2">Temperature Unit:</label>
+                <select id="unit-toggle" class="p-2 border border-gray-300 rounded-md">
+                    <option value="metric">Celsius (°C)</option>
+                    <option value="imperial">Fahrenheit (°F)</option>
+                </select>
+            </div>
+
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="section hidden">
+                <h2 class="text-3xl font-bold mb-6">Weather Data Based on City</h2>
+                <div id="weather-widget" class="bg-white p-6 shadow-lg rounded-lg mb-6 card">
+                    <!-- Weather data placeholder -->
+                    <h3 id="city-name" class="text-2xl font-bold mb-2"></h3>
+                    <p id="weather-description" class="text-xl mb-4"></p>
+                    <div id="weather-data" class="h-32 bg-blue-200 flex items-center justify-center text-xl">Weather Data</div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-6">
+                    <!-- Chart 1: Bar Chart -->
+                    <div class="bg-white p-6 shadow-lg rounded-lg card">
+                        <canvas id="bar-chart"></canvas>
+                    </div>
+                    <!-- Chart 2: Doughnut Chart -->
+                    <div class="bg-white p-6 shadow-lg rounded-lg card">
+                        <canvas id="doughnut-chart"></canvas>
+                    </div>
+                    <!-- Chart 3: Line Chart -->
+                    <div class="bg-white p-6 shadow-lg rounded-lg card">
+                        <canvas id="line-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tables Section -->
+            <div id="tables-section" class="section hidden">
+                <h2 class="text-3xl font-bold mb-6">Tables</h2>
+                <div class="grid grid-cols-3 gap-6">
+                    <!-- Table -->
+                    <div class="col-span-2 bg-white p-6 shadow-lg rounded-lg card">
+                        <table class="min-w-full bg-white">
+                            <thead class="bg-gray-800 text-white">
+                                <tr>
+                                    <th class="py-2 px-4">Date</th>
+                                    <th class="py-2 px-4">Temperature</th>
+                                    <th class="py-2 px-4">Humidity</th>
+                                    <th class="py-2 px-4">Wind Speed</th>
+                                    <th class="py-2 px-4">Weather</th>
+                                </tr>
+                            </thead>
+                            <tbody id="weather-table" class="text-gray-700"></tbody>
+                        </table>
+                        <div id="pagination" class="mt-4 flex justify-center"></div>
+                    </div>
+
+                    <!-- Chatbot Section -->
+                    <div class="bg-white p-6 shadow-lg rounded-lg card flex flex-col">
+                        <h3 class="text-xl font-bold mb-4">Chatbot</h3>
+                        <div id="chat-bar" class="bg-gray-100 p-3 mb-4 rounded-md h-32 overflow-y-scroll flex-grow">Chat Messages...</div>
+                        <input type="text" id="chat-input" placeholder="Ask something..." class="w-full p-3 border border-gray-300 rounded-md">
+                        <button id="chat-submit" class="mt-2 p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
