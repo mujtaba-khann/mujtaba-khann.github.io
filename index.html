@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather App Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
@@ -45,10 +46,15 @@
             transform: scale(1.03);
             box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
         }
+
+        /* Apply Poppins font */
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
     </style>
 </head>
 
-<body class="bg-gray-100 text-gray-800 font-sans">
+<body class="bg-gray-100 text-gray-800">
     <!-- Main Container -->
     <div class="flex h-screen">
 
@@ -77,7 +83,9 @@
                     </button>
                 </div>
                 <!-- User Profile -->
-                <div class="w-12 h-12 bg-gray-300 rounded-full"></div>
+                <div class="w-12 h-12 rounded-full overflow-hidden">
+                    <img src="kanye.jpg" alt="Profile Picture" class="w-full h-full object-cover">
+                </div>
             </div>
 
             <!-- Temperature Unit Toggle -->
@@ -147,6 +155,63 @@
             </div>
         </div>
     </div>
+    <script>
+        // Handle chat functionality
+        document.getElementById('chat-submit').addEventListener('click', async function () {
+            const input = document.getElementById('chat-input').value;
+            const chatBar = document.getElementById('chat-bar');
+
+            // Display user's message
+            chatBar.innerHTML += `<div>User: ${input}</div>`;
+            document.getElementById('chat-input').value = ''; // Clear input
+
+            // Call Gemini API to get a response
+            try {
+                const response = await fetchGeminiResponse(input);
+                console.log('API Response:', response); // Log the entire response for debugging
+
+                // Check if the response has the expected structure
+                if (response && response.candidates && response.candidates.length > 0 &&
+                    response.candidates[0].content && response.candidates[0].content.parts &&
+                    response.candidates[0].content.parts.length > 0) {
+                    chatBar.innerHTML += `<div>Gemini: ${response.candidates[0].content.parts[0].text}</div>`;
+                } else {
+                    chatBar.innerHTML += `<div>Error: Invalid response structure from API.</div>`;
+                }
+                chatBar.scrollTop = chatBar.scrollHeight; // Scroll to the bottom of chat
+            } catch (error) {
+                chatBar.innerHTML += `<div>Error: ${error.message}</div>`;
+            }
+        });
+
+        // Function to fetch response from the Gemini API
+        async function fetchGeminiResponse(input) {
+            const apiKey = 'AIzaSyCAVZDHGtGi5_T_oMOxxRpxgkDJdgZbYU4'; // Set your API key here
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: [
+                        {
+                            parts: [
+                                {
+                                    text: input // Use the user's input instead of userInput
+                                }
+                            ]
+                        }
+                    ]
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch response from the Gemini API');
+            }
+
+            return await response.json();
+        }
+    </script>
 </body>
 
 </html>

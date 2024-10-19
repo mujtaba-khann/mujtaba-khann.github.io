@@ -312,4 +312,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize the page
     if (dashboardSection) dashboardSection.classList.remove('hidden');
+    
 });
